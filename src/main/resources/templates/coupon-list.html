@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Coupon-Registed-List</title>
+    <!-- index.html 고유 CSS 추가 -->
+    <!-- Page level plugin CSS-->
+        <!-- select css-->
+         <link th:href="@{//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css}" rel="stylesheet">
+        <link th:href="@{//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.css}" rel="stylesheet">
+        <link th:href="@{//cdn.datatables.net/1.10.19/css/dataTables.semanticui.min.css}" rel="stylesheet">
+
+</head>
+<body>
+    <table id="dataTable"  class="ui celled table" style="width:100%">
+        <thead>
+        <tr>
+            <th>쿠폰 순번</th>
+            <th>휴대폰 번호</th>
+            <th>쿠폰 번호</th>
+            <th>개인정보동의여부</th>
+            <th>쿠폰생성일</th>
+        </tr>
+        </thead>
+        <tfoot>
+        <tr>
+            <th>쿠폰 순번</th>
+            <th>휴대폰 번호</th>
+            <th>쿠폰 번호</th>
+            <th>개인정보동의여부</th>
+            <th>쿠폰생성일</th>
+        </tr>
+        </tfoot>
+    </table>
+    <div th:include="commonJsConfig"></div>
+    <script th:src="@{//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js}"></script>
+    <script th:src="@{//cdn.datatables.net/1.10.19/js/dataTables.semanticui.min.js}"></script>
+    <script th:src="@{//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.js}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var table=  $('#dataTable').DataTable(
+                {
+                    "columnDefs": [{
+                        "defaultContent": "-",
+                        "targets": "_all"
+                    }],
+                    "paging": true,
+                    "ordering": true,
+                    "searching": true,
+                    ajax : {
+                        method:"get",
+                        url: "/api/events/coupon-list/all",
+                    },
+                    columns: [
+                        {data: 'couponSeq'},
+                        {data: 'phoneNumber', render: function ( toFormat ) {
+                        var tPhone;
+                        tPhone=toFormat.toString();
+                        if(tPhone.length == 11){
+                            tPhone= tPhone.substring(0,3) + '-' + tPhone.substring(3,7) + '-' + tPhone.substring(7,11);
+                        }else{
+                            tPhone= tPhone.substring(0,3) + '-' + tPhone.substring(3,6) + '-' + tPhone.substring(6,10);
+                        }
+                        return tPhone
+
+                        }},
+                        {data: 'couponNumber'},
+                        {data: 'privateYn'},
+                        {data: 'regDate'},
+                    ],
+                    dom: 'Bfrtip',
+                    select: {
+                        style: 'multi'
+                    }
+                });
+        });
+
+    </script>
+</body>
+</html>

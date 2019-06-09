@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>Coming Soon -LostArk</title>
+  <div th:include="commonCss"></div>
+
+</head>
+
+<body>
+
+  <div class="overlay"></div>
+  <video playsinline="playsinline" autoplay="autoplay" muted="muted" loop="loop">
+  </video>
+  <img th:src="@{/bootstrap/img/lostimg.jpg}">
+
+  <div class="masthead">
+    <div class="masthead-bg"></div>
+    <div class="container h-100">
+      <div class="row h-100">
+        <div class="col-12 my-auto">
+          <div class="masthead-content text-white py-5 py-md-0">
+            <h1 class="mb-3">Coming Soon!</h1>
+            <p class="mb-5">We're working hard to finish the development of LostArk. Our target launch date is
+              <strong>August 2019</strong>! Sign up for pre-booking event!</p>
+            <div class="input-group input-group-newsletter">
+              <input id="phoneNumber" type="number" class="form-control" placeholder="ex)010xxxx0606" aria-label="Enter phoneNumber..." aria-describedby="basic-addon">
+              <div class="input-group-append">
+                <button class="btn btn-secondary" type="button" id="register">Register!</button>
+              </div>
+              <div>
+                  <input type="checkbox" id="privateYn"><label for="privateYn">개인정보 수집 이용 및 SMS 수신에 동의 합니다.</label><br>
+                    (주)스마일게이트 엔터테인먼트에서는 이벤트 경품 지급 및 게임 관련 소식 전달을 위해
+                    '휴대폰 번호'를 수집 및 이용하며, 게임 서비스 종료시 파기합니다.
+              </div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="social-icons">
+    <ul class="list-unstyled text-center mb-0">
+      <li class="list-unstyled-item">
+        <a href="#">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+      <li class="list-unstyled-item">
+        <a href="#">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+      </li>
+      <li class="list-unstyled-item">
+        <a href="#">
+          <i class="fab fa-instagram"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!--common popup jquery dialog-->
+  <div id="couponAlert" title="NOTICE">
+    <div id="couponMsg"></div>
+  </div>
+
+  <div th:include="commonJsConfig"></div>
+  <script type="text/javascript" th:inline="javascript">
+    $(function () {
+            $('#register').on("click",function () {
+                var phoneNumber = $('#phoneNumber').val();
+               var result =  isCellPhone(phoneNumber);
+                if(result == false){
+                    $("#couponMsg").text("휴대폰번호를 확인해주세요.");
+                    $("#couponAlert").dialog();
+                    return false;
+                }
+
+                if($('input:checkbox[id="privateYn"]:checked').length <= 0) {
+                    $("#couponMsg").text("개인정보 수집 이용 및 SMS 수신에 동의 해주세요");
+                    $("#couponAlert").dialog();
+                    return false;
+                }
+
+                var url="/api/events";
+                var obj =  new Object();
+                obj.phoneNumber = $("#phoneNumber").val();
+                obj.privateYn = $("#privateYn").val();
+                var jsonData = JSON.stringify(obj);
+
+                ajaxPost(url,jsonData,registerCallback);
+
+            });
+
+            function registerCallback(response, jqXHR){
+                if(jqXHR.status == 200){
+                    var jsonObj = JSON.parse(response);
+                    $("#couponMsg").text("쿠폰번호 : "+jsonObj.couponNumber);
+                }else if(jqXHR.status == 409){
+                    $("#couponMsg").text("이미 등록된 휴대폰 번호 입니다.");
+                }else if(jqXHR.status == 406){
+                    $("#couponMsg").text("휴대폰 번호와 개인정보 수집 동의를 확인해주세요.");
+                }else if(jqXHR.status == 411){
+                    $("#couponMsg").text("휴대폰 형식이 일치하지 않습니다.");
+                }else{
+                    $("#couponMsg").text("관리자에게 문의해주세요.");
+                }
+                $("#couponAlert").dialog({close: function () {
+                        location.reload();
+                    }});
+            };
+
+        /*휴대폰번호 검사 정규식*/
+        function isCellPhone(p) {
+            var regPhone = /^((01[1|6|7|8|9])[1-9]+[0-9]{6,7})|(010[1-9][0-9]{7})$/;
+            return regPhone.test(p);
+        }
+    })
+
+
+
+  </script>
+</body>
+
+</html>
