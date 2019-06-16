@@ -31,7 +31,7 @@ public class BookingService {
           log.info("found  :  " + found);
           Coupon coupon = Coupon.builder()
                   .phoneNumber(registerDTO.getPhoneNumber())
-                  .privateYn(registerDTO.getprivateYn())
+                  .privateYn(registerDTO.isPrivateYn())
                   .couponNumber(found.toString())
                   .build();
 

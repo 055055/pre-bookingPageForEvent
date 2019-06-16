@@ -92,7 +92,7 @@
                 var url="/api/events";
                 var obj =  new Object();
                 obj.phoneNumber = $("#phoneNumber").val();
-                obj.privateYn = $("#privateYn").val();
+                obj.privateYn =  $("#privateYn").val() == "on"?true:false;
                 var jsonData = JSON.stringify(obj);
 
                 ajaxPost(url,jsonData,registerCallback);

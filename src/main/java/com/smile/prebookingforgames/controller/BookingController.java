@@ -5,7 +5,7 @@ import com.smile.prebookingforgames.dto.RegisterReqDTO;
 import com.smile.prebookingforgames.error.ServiceError;
 import com.smile.prebookingforgames.exception.PreBookingException;
 import com.smile.prebookingforgames.service.BookingService;
-import com.smile.prebookingforgames.validator.BookinValidator;
+import com.smile.prebookingforgames.validator.BookingValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -28,7 +28,7 @@ public class BookingController {
     private BookingService bookingService;
 
     @Autowired
-    BookinValidator bookinValidator;
+    BookingValidator bookingValidator;
 
 
     @GetMapping(value = "/api/events")
@@ -41,8 +41,9 @@ public class BookingController {
         if(errors.hasErrors()){
             throw  new PreBookingException(ServiceError.VALIDATION_CHECK_ERROR);
         }
-        bookinValidator.validate(registerReqDTO, errors);
+        bookingValidator.validate(registerReqDTO, errors);
         if(errors.hasErrors()){
+            log.error("coupon POST error{}",errors.getGlobalError().getCodes());
             throw  new PreBookingException(ServiceError.WRONG_PHONE_NUMBER);
         }
 

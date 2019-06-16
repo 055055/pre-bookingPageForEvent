@@ -12,21 +12,12 @@ import javax.validation.constraints.NotNull;
 @Setter
 @ToString
 public class RegisterReqDTO {
-    @NotEmpty @NotNull
+    @NotEmpty
     @JsonProperty("phoneNumber")
     private String phoneNumber;
 
-    @NotEmpty @NotNull
+    @NotNull
     @JsonProperty("privateYn")
-    private String privateYn;
-
-    public boolean getprivateYn(){
-        if(this.privateYn.equalsIgnoreCase("on")){
-            return true;
-        }else {
-            return false;
-        }
-
-    }
+    private boolean privateYn;
 
 }
