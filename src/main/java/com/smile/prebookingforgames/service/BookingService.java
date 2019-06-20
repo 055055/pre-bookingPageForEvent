@@ -32,12 +32,12 @@ public class BookingService {
           Coupon coupon = Coupon.builder()
                   .phoneNumber(registerDTO.getPhoneNumber())
                   .privateYn(registerDTO.isPrivateYn())
-                  .couponNumber(found.toString())
+                  .couponNumber(found)
                   .build();
 
          coupon =  couponRepository.save(coupon);
 
-          Map result = new HashMap();
+          Map<String,String> result = new HashMap();
           result.put("couponNumber",coupon.getCouponNumber());
          return result;
 
@@ -57,6 +57,7 @@ public class BookingService {
         List<CouponListDTO> result = new ArrayList<>();
 
       List<Coupon> found =   couponRepository.findAll();
+
         for (Coupon coupon : found) {
              CouponListDTO couponListDTO = CouponListDTO.builder()
                                              .couponSeq(coupon.getCouponSeq())
