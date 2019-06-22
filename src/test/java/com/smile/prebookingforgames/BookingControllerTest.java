@@ -69,7 +69,7 @@ public class BookingControllerTest {
     public void coupon_PostMapping_Success() throws Exception {
         //given
         RegisterReqDTO registerReqDTO = new RegisterReqDTO();
-        registerReqDTO.setPhoneNumber("01077645831");
+        registerReqDTO.setPhoneNumber("01010000000");
         registerReqDTO.setPrivateYn(true);
 
         Map<String,String> couponMap = new HashMap<>();
@@ -150,7 +150,7 @@ public class BookingControllerTest {
     public void coupon_PostMapping_BadRequest_WrongNumber_Validation() throws Exception {
         //given
         RegisterReqDTO registerReqDTO = new RegisterReqDTO();
-        registerReqDTO.setPhoneNumber("0101112233");
+        registerReqDTO.setPhoneNumber("0101111111");
         registerReqDTO.setPrivateYn(true);
         given(this.bookingService.registerCoupon(any(RegisterReqDTO.class))).willThrow(new PreBookingException(ServiceError.WRONG_PHONE_NUMBER));
 
