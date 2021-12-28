@@ -75,8 +75,8 @@
   <script type="text/javascript" th:inline="javascript">
     $(function () {
             $('#register').on("click",function () {
-                var phoneNumber = $('#phoneNumber').val();
-               var result =  isCellPhone(phoneNumber);
+              let phoneNumber = $('#phoneNumber').val();
+              let result =  isCollectCellPhoneNumber(phoneNumber);
                 if(result == false){
                     $("#couponMsg").text("휴대폰번호를 확인해주세요.");
                     $("#couponAlert").dialog();
@@ -89,43 +89,46 @@
                     return false;
                 }
 
-                var url="/api/events";
-                var obj =  new Object();
+              let url="/api/events";
+              let obj =  new Object();
                 obj.phoneNumber = $("#phoneNumber").val();
-                obj.privateYn =  $("#privateYn").val() == "on"?true:false;
-                var jsonData = JSON.stringify(obj);
+                obj.privateYn = ($('input:checkbox[id="privateYn"]:checked').length <= 0)?false:true;
+              let jsonData = JSON.stringify(obj);
 
                 ajaxPost(url,jsonData,registerCallback);
 
             });
 
             function registerCallback(response, jqXHR){
-                if(jqXHR.status == 200){
-                    var jsonObj = JSON.parse(response);
+              if(jqXHR.status == 200){
+                    let jsonObj = JSON.parse(response);
                     $("#couponMsg").text("쿠폰번호 : "+jsonObj.couponNumber);
-                }else if(jqXHR.status == 409){
-                    $("#couponMsg").text("이미 등록된 휴대폰 번호 입니다.");
-                }else if(jqXHR.status == 406){
-                    $("#couponMsg").text("휴대폰 번호와 개인정보 수집 동의를 확인해주세요.");
-                }else if(jqXHR.status == 411){
-                    $("#couponMsg").text("휴대폰 형식이 일치하지 않습니다.");
                 }else{
-                    $("#couponMsg").text("관리자에게 문의해주세요.");
-                }
+                  let title = '';
+                  let text = '';
+                  let jsonObj = JSON.parse(jqXHR.responseText);
+                  let errorFields = "";
+
+                  if(!!jsonObj.fieldValues){
+                    for (let i=0; i<jsonObj.fieldValues.length; i++){
+                      errorFields += jsonObj.fieldValues[i].reason+'\n';
+                    }
+                  }
+
+                  title = '쿠폰 요청 실패'+'('+jsonObj.code+')\n'+jsonObj.message;
+                  text = errorFields;
+                  $("#couponMsg").text(title+"\n"+text);
+              }
                 $("#couponAlert").dialog({close: function () {
                         location.reload();
                     }});
             };
 
-        /*휴대폰번호 검사 정규식*/
-        function isCellPhone(p) {
-            var regPhone = /^((01[1|6|7|8|9])[1-9]+[0-9]{6,7})|(010[1-9][0-9]{7})$/;
+        function isCollectCellPhoneNumber(p) {
+            let regPhone = /^((01[1|6|7|8|9])[1-9]+[0-9]{6,7})|(010[1-9][0-9]{7})$/;
             return regPhone.test(p);
         }
     })
-
-
-
   </script>
 </body>
 
