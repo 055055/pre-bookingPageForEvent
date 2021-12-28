@@ -1,6 +1,7 @@
 package com.smile.prebookingforgames.controller;
 
 import com.smile.prebookingforgames.dto.CouponIssueDto;
+import com.smile.prebookingforgames.dto.CouponIssuedListDto;
 import com.smile.prebookingforgames.service.EventService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,12 +23,12 @@ public class EventController {
     private final EventService eventService;
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity issueCoupon(@RequestBody @Valid CouponIssueDto.Request couponIssueDto) {
+    public ResponseEntity<?> issueCoupon(@RequestBody @Valid CouponIssueDto.Request couponIssueDto) {
         return ResponseEntity.ok().body(eventService.issueCoupon(couponIssueDto));
     }
 
     @GetMapping(value = "/coupon-list/all")
-    public Map<String, List> findAllCoupon() {
+    public Map<String, List<CouponIssuedListDto>> findAllCoupon() throws IllegalAccessException {
         return Collections.singletonMap("data", eventService.findAllCoupon());
     }
 }

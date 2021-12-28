@@ -23,7 +23,7 @@ public class CouponIssueDto {
 
     @Getter
     @Builder
-    public static class Response extends CouponIssueDto{
+    public static class Response extends CouponIssueDto {
         private String couponNumber;
     }
 }

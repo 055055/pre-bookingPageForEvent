@@ -12,14 +12,14 @@ public abstract class Coupon {
     private final CouponRepository couponRepository;
 
     protected boolean isDuplicatePhoneNumber(String phoneNumber) {
-        return couponRepository.findByPhoneNumber(phoneNumber).isPresent();
+        return couponRepository.findByPhoneNumberAndDeleted(phoneNumber, Boolean.FALSE).isPresent();
     }
 
     protected boolean isDuplicateCoupon(String couponNumber) {
-        return couponRepository.findByCouponNumber(couponNumber).isPresent();
+        return couponRepository.findByCouponNumberAndDeleted(couponNumber, Boolean.FALSE).isPresent();
     }
 
-    protected CouponEntity saveEntity(CouponIssueDto.Request couponIssueDto, String couponNumber){
+    protected CouponEntity saveEntity(CouponIssueDto.Request couponIssueDto, String couponNumber) {
         CouponEntity couponEntity = CouponEntity.builder()
                 .phoneNumber(couponIssueDto.getPhoneNumber())
                 .privateYn(couponIssueDto.isPrivateYn())
@@ -28,7 +28,7 @@ public abstract class Coupon {
         return couponRepository.save(couponEntity);
     }
 
-    public List<CouponEntity> findAll(){
+    public List<CouponEntity> findAll() {
         return couponRepository.findAll();
     }
 

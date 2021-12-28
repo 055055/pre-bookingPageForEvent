@@ -1,7 +1,7 @@
 package com.smile.prebookingforgames.exception;
 
 import com.smile.prebookingforgames.dto.ResultError;
-import com.smile.prebookingforgames.error.ServiceError;
+import com.smile.prebookingforgames.error.CouponError;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +20,16 @@ import java.util.List;
 @RestControllerAdvice
 public class EventExceptionHandler {
 
-    @ExceptionHandler(PreBookingException.class)
-    public ResponseEntity<?> PreBookingExceptionHandler(PreBookingException e) {
-        log.error("prebooking exception::{}", e.getServiceError());
-        return new ResponseEntity<>(e.getServiceError().getResultError(), e.getServiceError().getHttpStatus());
+    @ExceptionHandler(CouponException.class)
+    public ResponseEntity<?> responseCouponException(CouponException e) {
+        log.error("couponException:", e);
+        return new ResponseEntity<>(e.getCouponError().getResultError(), e.getCouponError().getHttpStatus());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> responseGlobalException(Exception e) {
+        log.error("Exception:", e);
+        return new ResponseEntity<>(CouponError.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -55,8 +61,8 @@ public class EventExceptionHandler {
         }
 
         ResultError response = ResultError.builder()
-                .code(ServiceError.REQUEST_VALIDATION.getCode())
-                .message(ServiceError.REQUEST_VALIDATION.getMessage())
+                .code(CouponError.REQUEST_VALIDATION.getCode())
+                .message(CouponError.REQUEST_VALIDATION.getMessage())
                 .fieldValues(fieldValues)
                 .build();
 

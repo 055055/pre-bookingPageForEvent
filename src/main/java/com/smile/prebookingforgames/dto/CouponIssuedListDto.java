@@ -1,11 +1,9 @@
 package com.smile.prebookingforgames.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.time.LocalDateTime;
 
@@ -21,10 +19,6 @@ public class CouponIssuedListDto {
     private LocalDateTime regDate;
 
     public String getPrivateYn() {
-        if(this.privateYn == true){
-            return "Y";
-        }else{
-            return "N";
-        }
+        return this.privateYn ? "Y" : "N";
     }
 }

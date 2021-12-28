@@ -5,8 +5,8 @@ import com.smile.prebookingforgames.common.RestDocsConfiguration;
 import com.smile.prebookingforgames.controller.EventController;
 import com.smile.prebookingforgames.dto.CouponIssueDto;
 import com.smile.prebookingforgames.dto.CouponIssuedListDto;
-import com.smile.prebookingforgames.error.ServiceError;
-import com.smile.prebookingforgames.exception.PreBookingException;
+import com.smile.prebookingforgames.error.CouponError;
+import com.smile.prebookingforgames.exception.CouponException;
 import com.smile.prebookingforgames.service.EventServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,7 +55,7 @@ public class EventControllerTest {
         mockMvc.perform(get("/api/events"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("register"))
-                //.andDo(print())
+        //.andDo(print())
         ;
     }
 
@@ -74,24 +74,24 @@ public class EventControllerTest {
                         .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .content(objectMapper.writeValueAsString(couponIssueDto)))
-                        .andDo(print())
-                        .andExpect(status().isOk())
-                        .andExpect(jsonPath("couponNumber").exists())
-                        .andDo(document("create-event",
-                            requestHeaders(
-                                    headerWithName(HttpHeaders.ACCEPT).description("accept header"),
-                                    headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
-                            ),
-                            requestFields(
-                                    fieldWithPath("phoneNumber").description("user's phoneNumber"),
-                                    fieldWithPath("privateYn").description("Personal Information Agreement_YN")
-                            ),
-                            responseHeaders(
-                                    headerWithName(HttpHeaders.CONTENT_TYPE).description("Content type")
-                            ),
-                            responseFields( fieldWithPath("couponNumber").description("user's couponNumber")
-                            )
-                        ))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("couponNumber").exists())
+                .andDo(document("create-event",
+                        requestHeaders(
+                                headerWithName(HttpHeaders.ACCEPT).description("accept header"),
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
+                        ),
+                        requestFields(
+                                fieldWithPath("phoneNumber").description("user's phoneNumber"),
+                                fieldWithPath("privateYn").description("Personal Information Agreement_YN")
+                        ),
+                        responseHeaders(
+                                headerWithName(HttpHeaders.CONTENT_TYPE).description("Content type")
+                        ),
+                        responseFields(fieldWithPath("couponNumber").description("user's couponNumber")
+                        )
+                ))
 
         ;
     }
@@ -103,17 +103,17 @@ public class EventControllerTest {
         couponIssueDto.setPhoneNumber("xxxxxxxxxx");
         couponIssueDto.setPrivateYn(true);
 
-        given(this.eventServiceImpl.issueCoupon(any(CouponIssueDto.Request .class))).willThrow(new PreBookingException(ServiceError.WRONG_PHONE_NUMBER));
+        given(this.eventServiceImpl.issueCoupon(any(CouponIssueDto.Request.class))).willThrow(new CouponException(CouponError.REQUEST_VALIDATION));
 
 
         //when //then
         mockMvc.perform(post("/api/events")
-                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(objectMapper.writeValueAsString(couponIssueDto)))
+                        .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(objectMapper.writeValueAsString(couponIssueDto)))
                 .andDo(print())
-                .andExpect(status().isLengthRequired())
-                .andExpect(jsonPath("resultCode").value("4003"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("resultCode").value("4000"))
         ;
     }
 
@@ -124,17 +124,17 @@ public class EventControllerTest {
         couponIssueDto.setPhoneNumber("");
         couponIssueDto.setPrivateYn(true);
 
-        given(this.eventServiceImpl.issueCoupon(any(CouponIssueDto.Request .class))).willThrow(new PreBookingException(ServiceError.VALIDATION_CHECK_ERROR));
+        given(this.eventServiceImpl.issueCoupon(any(CouponIssueDto.Request.class))).willThrow(new CouponException(CouponError.REQUEST_VALIDATION));
 
 
         //when //then
         mockMvc.perform(post("/api/events")
-                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(objectMapper.writeValueAsString(couponIssueDto)))
+                        .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(objectMapper.writeValueAsString(couponIssueDto)))
                 .andDo(print())
-                .andExpect(status().isNotAcceptable())
-                .andExpect(jsonPath("resultCode").value("4002"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("resultCode").value("4000"))
         ;
     }
 
@@ -145,20 +145,19 @@ public class EventControllerTest {
         couponIssueDto.setPhoneNumber("0101111111");
         couponIssueDto.setPrivateYn(true);
 
-        given(this.eventServiceImpl.issueCoupon(any(CouponIssueDto.Request .class))).willThrow(new PreBookingException(ServiceError.WRONG_PHONE_NUMBER));
+        given(this.eventServiceImpl.issueCoupon(any(CouponIssueDto.Request.class))).willThrow(new CouponException(CouponError.REQUEST_VALIDATION));
 
 
         //when //then
         mockMvc.perform(post("/api/events")
-                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(objectMapper.writeValueAsString(couponIssueDto)))
+                        .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(objectMapper.writeValueAsString(couponIssueDto)))
                 .andDo(print())
-                .andExpect(status().isLengthRequired())
-                .andExpect(jsonPath("resultCode").value("4003"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("resultCode").value("4000"))
         ;
     }
-
 
 
     @Test
@@ -175,20 +174,20 @@ public class EventControllerTest {
         //given
         List<CouponIssuedListDto> list = new ArrayList<>();
         CouponIssuedListDto couponIssuedListDTO = CouponIssuedListDto.builder()
-                                        .couponSeq(1L)
-                                        .couponNumber("123e-4qwer-5ASDF")
-                                        .phoneNumber("010xxxxyyyy")
-                                        .privateYn(true)
-                                        .regDate(LocalDateTime.now())
-                                        .build();
+                .couponSeq(1L)
+                .couponNumber("123e-4qwer-5ASDF")
+                .phoneNumber("010xxxxyyyy")
+                .privateYn(true)
+                .regDate(LocalDateTime.now())
+                .build();
 
         list.add(couponIssuedListDTO);
         given(this.eventServiceImpl.findAllCoupon()).willReturn(list);
 
         //when //then
         mockMvc.perform(get("/api/events/coupon-list/all")
-                .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                        .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("data").exists())
