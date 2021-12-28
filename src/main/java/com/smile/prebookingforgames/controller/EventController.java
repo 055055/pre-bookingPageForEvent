@@ -24,13 +24,13 @@ public class EventController {
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity issueCoupon(@RequestBody @Valid CouponIssueDto couponIssueDto) {
-        Map<String, String> result = eventService.registerCoupon(couponIssueDto);
+        Map<String, String> result = eventService.issueCoupon(couponIssueDto);
         return ResponseEntity.ok().body(result);
     }
 
     @GetMapping(value = "/coupon-list/all")
-    public Map<String, List> couponListAll() {
-        List<CouponListDTO> result = eventService.getCouponList();
+    public Map<String, List> findAllCoupon() {
+        List<CouponListDTO> result = eventService.findAllCoupon();
         Map<String, List> data = new HashMap<>();
         data.put("data", result);
         return data;

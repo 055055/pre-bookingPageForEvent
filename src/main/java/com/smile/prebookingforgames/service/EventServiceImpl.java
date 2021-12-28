@@ -1,14 +1,13 @@
 package com.smile.prebookingforgames.service;
 
-import com.smile.prebookingforgames.dto.CouponListDTO;
 import com.smile.prebookingforgames.dto.CouponIssueDto;
-import com.smile.prebookingforgames.error.ServiceError;
-import com.smile.prebookingforgames.exception.PreBookingException;
+import com.smile.prebookingforgames.dto.CouponListDTO;
+import com.smile.prebookingforgames.entity.CouponEntity;
+import com.smile.prebookingforgames.model.AlphabetAndNumericCoupon;
 import com.smile.prebookingforgames.model.Coupon;
 import com.smile.prebookingforgames.repository.CouponRepository;
-import com.smile.prebookingforgames.utils.MakeCoupon;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,59 +17,37 @@ import java.util.Map;
 
 @Slf4j
 @Service
-public class EventServiceImpl implements EventService{
-    @Autowired
-    private CouponRepository couponRepository;
-    @Autowired
-    private MakeCoupon makeCoupon;
+@RequiredArgsConstructor
+public class EventServiceImpl implements EventService {
+    private final CouponRepository couponRepository;
 
     @Override
-    public Map<String,String> registerCoupon(CouponIssueDto registerDTO)  {
-      try {
-          makeCoupon.phoneNumberDuplicateCheck(registerDTO.getPhoneNumber());
-          String found = makeCoupon.digit12Number();
-          log.info("found  :  " + found);
-          Coupon coupon = Coupon.builder()
-                  .phoneNumber(registerDTO.getPhoneNumber())
-                  .privateYn(registerDTO.isPrivateYn())
-                  .couponNumber(found)
-                  .build();
+    public Map<String, String> issueCoupon(CouponIssueDto registerDTO) {
 
-         coupon =  couponRepository.save(coupon);
-
-          Map<String,String> result = new HashMap();
-          result.put("couponNumber",coupon.getCouponNumber());
-         return result;
-
-      }catch (PreBookingException e){
-          log.error("registerCoupon PreeBookingException={}",e.getServiceError());
-          throw new PreBookingException(e.getServiceError());
-      }catch (Exception ex){
-          log.error("registerCouponException={}",ex);
-          throw new PreBookingException(ServiceError.INTERNAL_SERVER_ERROR);
-      }
-
+        Coupon coupon = new AlphabetAndNumericCoupon(couponRepository);
+        CouponEntity issue = coupon.issue(registerDTO);
+        Map<String, String> result = new HashMap();
+        result.put("couponNumber", issue.getCouponNumber());
+        return result;
     }
 
     @Override
-    public  List<CouponListDTO> getCouponList() {
+    public List<CouponListDTO> findAllCoupon() {
 
         List<CouponListDTO> result = new ArrayList<>();
 
-      List<Coupon> found =   couponRepository.findAll();
+        List<CouponEntity> found = couponRepository.findAll();
 
-        for (Coupon coupon : found) {
-             CouponListDTO couponListDTO = CouponListDTO.builder()
-                                             .couponSeq(coupon.getCouponSeq())
-                                             .couponNumber(coupon.getCouponNumber())
-                                            .phoneNumber(coupon.getPhoneNumber())
-                                            .privateYn(coupon.isPrivateYn())
-                                            .regDate(coupon.getRegDate())
-                                             .build();
+        for (CouponEntity couponEntity : found) {
+            CouponListDTO couponListDTO = CouponListDTO.builder()
+                    .couponSeq(couponEntity.getCouponSeq())
+                    .couponNumber(couponEntity.getCouponNumber())
+                    .phoneNumber(couponEntity.getPhoneNumber())
+                    .privateYn(couponEntity.isPrivateYn())
+                    .regDate(couponEntity.getRegDate())
+                    .build();
             result.add(couponListDTO);
         }
-       return result;
+        return result;
     }
-
-
 }

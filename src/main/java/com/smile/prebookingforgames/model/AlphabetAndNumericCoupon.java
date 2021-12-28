@@ -1,21 +1,22 @@
-package com.smile.prebookingforgames.utils;
+package com.smile.prebookingforgames.model;
 
+import com.smile.prebookingforgames.dto.CouponIssueDto;
+import com.smile.prebookingforgames.entity.CouponEntity;
 import com.smile.prebookingforgames.error.ServiceError;
 import com.smile.prebookingforgames.exception.PreBookingException;
 import com.smile.prebookingforgames.repository.CouponRepository;
-import org.springframework.stereotype.Component;
 
-import java.util.Optional;
 import java.util.Random;
 
-@Component
-public class MakeCoupon {
-    private CouponRepository couponRepository;
-    public MakeCoupon(CouponRepository couponRepository) {
-        this.couponRepository = couponRepository;
+public class AlphabetAndNumericCoupon extends Coupon {
+
+    public AlphabetAndNumericCoupon(CouponRepository couponRepository) {
+        super(couponRepository);
     }
 
-    public String digit12Number() throws PreBookingException {
+    @Override
+    public CouponEntity issue(CouponIssueDto couponIssueDto) {
+        if(isDuplicatePhoneNumber(couponIssueDto.getPhoneNumber())) throw new PreBookingException(ServiceError.PHONE_NUMBER_DUPLICATE);
         Random rnd =new Random();
         StringBuffer buf =new StringBuffer();
         int i = 0;
@@ -38,24 +39,13 @@ public class MakeCoupon {
             i++;
 
             if(i==12){
-                Optional<String> found =  couponRepository.findByCouponNumber(buf.toString());
-                if (found.isPresent()){
+                if(isDuplicateCoupon(buf.toString())){
                     i=0;
                 }else{
                     check = false;
                 }
             }
-
         }
-        return buf.toString();
-    }
-
-
-    public void phoneNumberDuplicateCheck(String phoneNumber) throws PreBookingException {
-      Optional<String> found =  couponRepository.findByPhoneNumber(phoneNumber);
-        if(found.isPresent()){
-            throw new PreBookingException(ServiceError.PHONE_NUMBER_DUPLICATE);
-        }
-
+        return saveEntity(couponIssueDto, buf.toString());
     }
 }

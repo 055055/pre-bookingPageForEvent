@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface EventService {
-    Map<String,String> registerCoupon(CouponIssueDto registerDTO);
-    List<CouponListDTO> getCouponList();
+    Map<String,String> issueCoupon(CouponIssueDto registerDTO);
+    List<CouponListDTO> findAllCoupon();
 }

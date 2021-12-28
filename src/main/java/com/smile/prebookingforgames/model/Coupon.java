@@ -1,47 +1,30 @@
 package com.smile.prebookingforgames.model;
 
+import com.smile.prebookingforgames.dto.CouponIssueDto;
+import com.smile.prebookingforgames.entity.CouponEntity;
+import com.smile.prebookingforgames.repository.CouponRepository;
+import lombok.RequiredArgsConstructor;
 
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Where;
+@RequiredArgsConstructor
+public abstract class Coupon {
+    private final CouponRepository couponRepository;
 
-import javax.persistence.*;
-import java.time.LocalDateTime;
-
-
-@Getter
-@ToString
-@Entity
-@NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "COUPON")
-@Where(clause="deleted=false")
-public class Coupon {
-
-    @Id @GeneratedValue
-    @Column(name = "COUPON_SEQ",updatable = false)
-    private Long couponSeq;
-
-    @Column(name = "PHONE_NUMBER",updatable = false)
-    private String phoneNumber;
-
-    @Column(name = "PERSONAL_INFORMATION_AGREEMENT_YN",updatable = false)
-    private boolean privateYn;
-
-    @Column(name = "COUPON_NUMBER",updatable = false)
-    private String couponNumber;
-
-    @Column(name = "DELETED",updatable = true)
-    private boolean deleted;
-
-    @Column(name = "REG_DATE",updatable = false)
-    @CreationTimestamp
-    private LocalDateTime regDate;
-
-    @Builder
-    public Coupon(String phoneNumber, boolean privateYn, String couponNumber) {
-        this.phoneNumber = phoneNumber;
-        this.privateYn = privateYn;
-        this.couponNumber = couponNumber;
+    protected boolean isDuplicatePhoneNumber(String phoneNumber) {
+        return couponRepository.findByPhoneNumber(phoneNumber).isPresent();
     }
+
+    protected boolean isDuplicateCoupon(String couponNumber) {
+        return couponRepository.findByCouponNumber(couponNumber).isPresent();
+    }
+
+    protected CouponEntity saveEntity(CouponIssueDto couponIssueDto, String couponNumber){
+        CouponEntity couponEntity = CouponEntity.builder()
+                .phoneNumber(couponIssueDto.getPhoneNumber())
+                .privateYn(couponIssueDto.isPrivateYn())
+                .couponNumber(couponNumber)
+                .build();
+        return couponRepository.save(couponEntity);
+    }
+
+    public abstract CouponEntity issue(CouponIssueDto couponIssueDto);
 }
