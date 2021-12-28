@@ -2,12 +2,12 @@ package com.smile.prebookingforgames;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smile.prebookingforgames.common.RestDocsConfiguration;
-import com.smile.prebookingforgames.controller.BookingController;
+import com.smile.prebookingforgames.controller.EventController;
 import com.smile.prebookingforgames.dto.CouponListDTO;
 import com.smile.prebookingforgames.dto.RegisterReqDTO;
 import com.smile.prebookingforgames.error.ServiceError;
 import com.smile.prebookingforgames.exception.PreBookingException;
-import com.smile.prebookingforgames.service.BookingService;
+import com.smile.prebookingforgames.service.EventServiceImpl;
 import com.smile.prebookingforgames.validator.BookingValidator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,8 +42,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(RestDocsConfiguration.class)
 @AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
-@WebMvcTest(BookingController.class)
-public class BookingControllerTest {
+@WebMvcTest(EventController.class)
+public class EventControllerTest {
     @Autowired
     MockMvc mockMvc;
 
@@ -51,7 +51,7 @@ public class BookingControllerTest {
     ObjectMapper objectMapper;
 
     @MockBean
-    BookingService bookingService;
+    EventServiceImpl eventServiceImpl;
 
     @MockBean
     BookingValidator bookingValidator;
@@ -74,7 +74,7 @@ public class BookingControllerTest {
 
         Map<String,String> couponMap = new HashMap<>();
         couponMap.put("couponNumber","123A-4qwe-5bqw");
-        given(this.bookingService.registerCoupon(any(RegisterReqDTO.class))).willReturn(couponMap);
+        given(this.eventServiceImpl.registerCoupon(any(RegisterReqDTO.class))).willReturn(couponMap);
 
         //when //then
         mockMvc.perform(post("/api/events")
@@ -110,7 +110,7 @@ public class BookingControllerTest {
         registerReqDTO.setPhoneNumber("xxxxxxxxxx");
         registerReqDTO.setPrivateYn(true);
 
-        given(this.bookingService.registerCoupon(any(RegisterReqDTO.class))).willThrow(new PreBookingException(ServiceError.WRONG_PHONE_NUMBER));
+        given(this.eventServiceImpl.registerCoupon(any(RegisterReqDTO.class))).willThrow(new PreBookingException(ServiceError.WRONG_PHONE_NUMBER));
 
 
         //when //then
@@ -132,7 +132,7 @@ public class BookingControllerTest {
         registerReqDTO.setPrivateYn(false);
 
 
-        given(this.bookingService.registerCoupon(any(RegisterReqDTO.class))).willThrow(new PreBookingException(ServiceError.VALIDATION_CHECK_ERROR));
+        given(this.eventServiceImpl.registerCoupon(any(RegisterReqDTO.class))).willThrow(new PreBookingException(ServiceError.VALIDATION_CHECK_ERROR));
 
 
         //when //then
@@ -152,7 +152,7 @@ public class BookingControllerTest {
         RegisterReqDTO registerReqDTO = new RegisterReqDTO();
         registerReqDTO.setPhoneNumber("0101111111");
         registerReqDTO.setPrivateYn(true);
-        given(this.bookingService.registerCoupon(any(RegisterReqDTO.class))).willThrow(new PreBookingException(ServiceError.WRONG_PHONE_NUMBER));
+        given(this.eventServiceImpl.registerCoupon(any(RegisterReqDTO.class))).willThrow(new PreBookingException(ServiceError.WRONG_PHONE_NUMBER));
 
 
         //when //then
@@ -190,7 +190,7 @@ public class BookingControllerTest {
                                         .build();
 
         list.add(couponListDTO);
-        given(this.bookingService.getCouponList()).willReturn(list);
+        given(this.eventServiceImpl.getCouponList()).willReturn(list);
 
         //when //then
         mockMvc.perform(get("/api/events/coupon-list/all")

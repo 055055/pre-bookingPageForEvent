@@ -18,13 +18,14 @@ import java.util.Map;
 
 @Slf4j
 @Service
-public class BookingService {
+public class EventServiceImpl implements EventService{
     @Autowired
     private CouponRepository couponRepository;
     @Autowired
     private MakeCoupon makeCoupon;
 
-    public Map<String,String> registerCoupon(RegisterReqDTO registerDTO) throws PreBookingException {
+    @Override
+    public Map<String,String> registerCoupon(RegisterReqDTO registerDTO)  {
       try {
           makeCoupon.phoneNumberDuplicateCheck(registerDTO.getPhoneNumber());
           String found = makeCoupon.digit12Number();
@@ -51,8 +52,8 @@ public class BookingService {
 
     }
 
-
-    public  List<CouponListDTO> getCouponList() throws PreBookingException {
+    @Override
+    public  List<CouponListDTO> getCouponList() {
 
         List<CouponListDTO> result = new ArrayList<>();
 
