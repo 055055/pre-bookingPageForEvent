@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smile.prebookingforgames.common.RestDocsConfiguration;
 import com.smile.prebookingforgames.controller.EventController;
 import com.smile.prebookingforgames.dto.CouponIssueDto;
-import com.smile.prebookingforgames.dto.CouponListDTO;
+import com.smile.prebookingforgames.dto.CouponIssuedListDto;
 import com.smile.prebookingforgames.error.ServiceError;
 import com.smile.prebookingforgames.exception.PreBookingException;
 import com.smile.prebookingforgames.service.EventServiceImpl;
@@ -23,9 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -64,13 +62,12 @@ public class EventControllerTest {
     @Test
     public void coupon_PostMapping_Success() throws Exception {
         //given
-        CouponIssueDto couponIssueDto = new CouponIssueDto();
+        CouponIssueDto.Request couponIssueDto = new CouponIssueDto.Request();
         couponIssueDto.setPhoneNumber("01010000000");
         couponIssueDto.setPrivateYn(true);
 
-        Map<String,String> couponMap = new HashMap<>();
-        couponMap.put("couponNumber","123A-4qwe-5bqw");
-        given(this.eventServiceImpl.issueCoupon(any(CouponIssueDto.class))).willReturn(couponMap);
+        CouponIssueDto.Response response = CouponIssueDto.Response.builder().couponNumber("123A-4qwe-5bqw").build();
+        given(this.eventServiceImpl.issueCoupon(any(CouponIssueDto.Request.class))).willReturn(response);
 
         //when //then
         mockMvc.perform(post("/api/events")
@@ -102,11 +99,11 @@ public class EventControllerTest {
     @Test
     public void coupon_PostMapping_BadRequest() throws Exception {
         //given
-        CouponIssueDto couponIssueDto = new CouponIssueDto();
+        CouponIssueDto.Request couponIssueDto = new CouponIssueDto.Request();
         couponIssueDto.setPhoneNumber("xxxxxxxxxx");
         couponIssueDto.setPrivateYn(true);
 
-        given(this.eventServiceImpl.issueCoupon(any(CouponIssueDto.class))).willThrow(new PreBookingException(ServiceError.WRONG_PHONE_NUMBER));
+        given(this.eventServiceImpl.issueCoupon(any(CouponIssueDto.Request .class))).willThrow(new PreBookingException(ServiceError.WRONG_PHONE_NUMBER));
 
 
         //when //then
@@ -123,12 +120,11 @@ public class EventControllerTest {
     @Test
     public void coupon_PostMapping_BadRequest_Validation() throws Exception {
         //given
-        CouponIssueDto couponIssueDto = new CouponIssueDto();
+        CouponIssueDto.Request couponIssueDto = new CouponIssueDto.Request();
         couponIssueDto.setPhoneNumber("");
-        couponIssueDto.setPrivateYn(false);
+        couponIssueDto.setPrivateYn(true);
 
-
-        given(this.eventServiceImpl.issueCoupon(any(CouponIssueDto.class))).willThrow(new PreBookingException(ServiceError.VALIDATION_CHECK_ERROR));
+        given(this.eventServiceImpl.issueCoupon(any(CouponIssueDto.Request .class))).willThrow(new PreBookingException(ServiceError.VALIDATION_CHECK_ERROR));
 
 
         //when //then
@@ -145,10 +141,11 @@ public class EventControllerTest {
     @Test
     public void coupon_PostMapping_BadRequest_WrongNumber_Validation() throws Exception {
         //given
-        CouponIssueDto couponIssueDto = new CouponIssueDto();
+        CouponIssueDto.Request couponIssueDto = new CouponIssueDto.Request();
         couponIssueDto.setPhoneNumber("0101111111");
         couponIssueDto.setPrivateYn(true);
-        given(this.eventServiceImpl.issueCoupon(any(CouponIssueDto.class))).willThrow(new PreBookingException(ServiceError.WRONG_PHONE_NUMBER));
+
+        given(this.eventServiceImpl.issueCoupon(any(CouponIssueDto.Request .class))).willThrow(new PreBookingException(ServiceError.WRONG_PHONE_NUMBER));
 
 
         //when //then
@@ -176,8 +173,8 @@ public class EventControllerTest {
     @Test
     public void couponListAll_GetMapping_SUCCESS() throws Exception {
         //given
-        List<CouponListDTO> list = new ArrayList<>();
-        CouponListDTO couponListDTO = CouponListDTO.builder()
+        List<CouponIssuedListDto> list = new ArrayList<>();
+        CouponIssuedListDto couponIssuedListDTO = CouponIssuedListDto.builder()
                                         .couponSeq(1L)
                                         .couponNumber("123e-4qwer-5ASDF")
                                         .phoneNumber("010xxxxyyyy")
@@ -185,7 +182,7 @@ public class EventControllerTest {
                                         .regDate(LocalDateTime.now())
                                         .build();
 
-        list.add(couponListDTO);
+        list.add(couponIssuedListDTO);
         given(this.eventServiceImpl.findAllCoupon()).willReturn(list);
 
         //when //then

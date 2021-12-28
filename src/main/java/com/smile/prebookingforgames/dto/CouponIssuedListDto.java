@@ -11,22 +11,12 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@ToString
 @Builder
-public class CouponListDTO {
-    @JsonProperty("couponSeq")
+public class CouponIssuedListDto {
     private Long couponSeq;
-
-    @JsonProperty("phoneNumber")
     private String phoneNumber;
-
-    @JsonProperty("privateYn")
     private boolean privateYn;
-
-    @JsonProperty("couponNumber")
     private String couponNumber;
-
-    @JsonProperty("regDate")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime regDate;
 

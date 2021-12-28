@@ -15,7 +15,7 @@ public class AlphabetAndNumericCoupon extends Coupon {
     }
 
     @Override
-    public CouponEntity issue(CouponIssueDto couponIssueDto) {
+    public CouponEntity issue(CouponIssueDto.Request couponIssueDto) {
         if(isDuplicatePhoneNumber(couponIssueDto.getPhoneNumber())) throw new PreBookingException(ServiceError.PHONE_NUMBER_DUPLICATE);
         Random rnd =new Random();
         StringBuffer buf =new StringBuffer();

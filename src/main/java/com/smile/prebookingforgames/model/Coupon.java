@@ -5,6 +5,8 @@ import com.smile.prebookingforgames.entity.CouponEntity;
 import com.smile.prebookingforgames.repository.CouponRepository;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 public abstract class Coupon {
     private final CouponRepository couponRepository;
@@ -17,7 +19,7 @@ public abstract class Coupon {
         return couponRepository.findByCouponNumber(couponNumber).isPresent();
     }
 
-    protected CouponEntity saveEntity(CouponIssueDto couponIssueDto, String couponNumber){
+    protected CouponEntity saveEntity(CouponIssueDto.Request couponIssueDto, String couponNumber){
         CouponEntity couponEntity = CouponEntity.builder()
                 .phoneNumber(couponIssueDto.getPhoneNumber())
                 .privateYn(couponIssueDto.isPrivateYn())
@@ -26,5 +28,9 @@ public abstract class Coupon {
         return couponRepository.save(couponEntity);
     }
 
-    public abstract CouponEntity issue(CouponIssueDto couponIssueDto);
+    public List<CouponEntity> findAll(){
+        return couponRepository.findAll();
+    }
+
+    public abstract CouponEntity issue(CouponIssueDto.Request couponIssueDto);
 }
