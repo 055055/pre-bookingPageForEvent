@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 public enum CouponError {
     REQUEST_VALIDATION("4000", "요청 값을 다시 확인해 주세요", HttpStatus.BAD_REQUEST),
     PHONE_NUMBER_DUPLICATE("4001", "이미 요청한 휴대폰 번호 입니다.", HttpStatus.CONFLICT),
-    INTERNAL_SERVER_ERROR("5000", "internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
+    INTERNAL_SERVER_ERROR("5000", "내부 서비스 오류 입니다.", HttpStatus.INTERNAL_SERVER_ERROR);
 
     public String code;
     public String message;

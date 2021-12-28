@@ -18,6 +18,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -40,6 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
 @WebMvcTest(EventController.class)
+@ActiveProfiles("test")
 public class EventControllerTest {
     @Autowired
     MockMvc mockMvc;
@@ -52,11 +54,9 @@ public class EventControllerTest {
 
     @Test
     public void coupon_GetMapping_Success() throws Exception {
-        mockMvc.perform(get("/api/events"))
+        mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("register"))
-        //.andDo(print())
-        ;
+                .andExpect(view().name("register"));
     }
 
     @Test
@@ -83,13 +83,13 @@ public class EventControllerTest {
                                 headerWithName(HttpHeaders.CONTENT_TYPE).description("content type")
                         ),
                         requestFields(
-                                fieldWithPath("phoneNumber").description("user's phoneNumber"),
-                                fieldWithPath("privateYn").description("Personal Information Agreement_YN")
+                                fieldWithPath("phoneNumber").description("사용자 휴대폰 전화번호 "),
+                                fieldWithPath("privateYn").description("개인정보 동의 여부")
                         ),
                         responseHeaders(
                                 headerWithName(HttpHeaders.CONTENT_TYPE).description("Content type")
                         ),
-                        responseFields(fieldWithPath("couponNumber").description("user's couponNumber")
+                        responseFields(fieldWithPath("couponNumber").description("쿠폰 번호")
                         )
                 ))
 
@@ -113,7 +113,7 @@ public class EventControllerTest {
                         .content(objectMapper.writeValueAsString(couponIssueDto)))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("resultCode").value("4000"))
+                .andExpect(jsonPath("code").value("4000"))
         ;
     }
 
@@ -134,7 +134,7 @@ public class EventControllerTest {
                         .content(objectMapper.writeValueAsString(couponIssueDto)))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("resultCode").value("4000"))
+                .andExpect(jsonPath("code").value("4000"))
         ;
     }
 
@@ -155,7 +155,7 @@ public class EventControllerTest {
                         .content(objectMapper.writeValueAsString(couponIssueDto)))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("resultCode").value("4000"))
+                .andExpect(jsonPath("code").value("4000"))
         ;
     }
 
@@ -165,7 +165,6 @@ public class EventControllerTest {
         mockMvc.perform(get("/api/events/coupon-list"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("coupon-list"))
-        //.andDo(print())
         ;
     }
 
@@ -200,12 +199,12 @@ public class EventControllerTest {
                                 headerWithName(HttpHeaders.CONTENT_TYPE).description("Content type")
                         ),
                         responseFields(
-                                fieldWithPath("data[]").description("Data List"),
-                                fieldWithPath("data[].couponSeq").description("user's couponeSeq"),
-                                fieldWithPath("data[].phoneNumber").description("user's phoneNumber"),
-                                fieldWithPath("data[].privateYn").description("Personal Information Agreement_YN"),
-                                fieldWithPath("data[].couponNumber").description("user's couponNumber"),
-                                fieldWithPath("data[].regDate").description("Data Registration Date")
+                                fieldWithPath("data[]").description("응답 객체"),
+                                fieldWithPath("data[].couponSeq").description("쿠폰 순번"),
+                                fieldWithPath("data[].phoneNumber").description("사용자 휴대폰 전화번호"),
+                                fieldWithPath("data[].privateYn").description("개인정보 동의 여부"),
+                                fieldWithPath("data[].couponNumber").description("쿠폰 번호"),
+                                fieldWithPath("data[].regDate").description("쿠폰 발행 등록 일시")
                         )
                 ))
         ;

@@ -1,5 +1,5 @@
-= pre-booking for event API Guide
-이승익;
+= 게임 사전 예약 쿠폰 발행 서비스
+055055;
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
@@ -15,21 +15,17 @@
 |===
 | Http 코드 | 에러 코드 | 설명
 
-| `409, Conflict`
-|  4001
-| phone number already register
+| `400, BAD_REQUEST`
+|  4000
+|  요청 값을 다시 확인해 주세요
 
-| `406, Not Acceptable`
-| 4002
-| phone number or privateYn -Validation Check error
+| `409, CONFLICT`
+| 4001
+| 이미 요청한 휴대폰 번호 입니다.
 
-| `411, Length Required`
-| 4003
-| wrong phone number  - Regular expression error
-
-| `500, Internal Server Error`
+| `500, INTERNAL_SERVER_ERROR`
 | 5000
-| Internal Serveer Error
+| 내부 서비스 오류 입니다.
 |===
 
 
