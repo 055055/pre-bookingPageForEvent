@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smile.prebookingforgames.common.RestDocsConfiguration;
 import com.smile.prebookingforgames.controller.EventController;
 import com.smile.prebookingforgames.dto.CouponListDTO;
-import com.smile.prebookingforgames.dto.RegisterReqDTO;
+import com.smile.prebookingforgames.dto.CouponIssueDto;
 import com.smile.prebookingforgames.error.ServiceError;
 import com.smile.prebookingforgames.exception.PreBookingException;
 import com.smile.prebookingforgames.service.EventServiceImpl;
@@ -68,19 +68,19 @@ public class EventControllerTest {
     @Test
     public void coupon_PostMapping_Success() throws Exception {
         //given
-        RegisterReqDTO registerReqDTO = new RegisterReqDTO();
-        registerReqDTO.setPhoneNumber("01010000000");
-        registerReqDTO.setPrivateYn(true);
+        CouponIssueDto couponIssueDto = new CouponIssueDto();
+        couponIssueDto.setPhoneNumber("01010000000");
+        couponIssueDto.setPrivateYn(true);
 
         Map<String,String> couponMap = new HashMap<>();
         couponMap.put("couponNumber","123A-4qwe-5bqw");
-        given(this.eventServiceImpl.registerCoupon(any(RegisterReqDTO.class))).willReturn(couponMap);
+        given(this.eventServiceImpl.registerCoupon(any(CouponIssueDto.class))).willReturn(couponMap);
 
         //when //then
         mockMvc.perform(post("/api/events")
                         .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
-                        .content(objectMapper.writeValueAsString(registerReqDTO)))
+                        .content(objectMapper.writeValueAsString(couponIssueDto)))
                         .andDo(print())
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("couponNumber").exists())
@@ -106,18 +106,18 @@ public class EventControllerTest {
     @Test
     public void coupon_PostMapping_BadRequest() throws Exception {
         //given
-        RegisterReqDTO registerReqDTO = new RegisterReqDTO();
-        registerReqDTO.setPhoneNumber("xxxxxxxxxx");
-        registerReqDTO.setPrivateYn(true);
+        CouponIssueDto couponIssueDto = new CouponIssueDto();
+        couponIssueDto.setPhoneNumber("xxxxxxxxxx");
+        couponIssueDto.setPrivateYn(true);
 
-        given(this.eventServiceImpl.registerCoupon(any(RegisterReqDTO.class))).willThrow(new PreBookingException(ServiceError.WRONG_PHONE_NUMBER));
+        given(this.eventServiceImpl.registerCoupon(any(CouponIssueDto.class))).willThrow(new PreBookingException(ServiceError.WRONG_PHONE_NUMBER));
 
 
         //when //then
         mockMvc.perform(post("/api/events")
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(objectMapper.writeValueAsString(registerReqDTO)))
+                .content(objectMapper.writeValueAsString(couponIssueDto)))
                 .andDo(print())
                 .andExpect(status().isLengthRequired())
                 .andExpect(jsonPath("resultCode").value("4003"))
@@ -127,19 +127,19 @@ public class EventControllerTest {
     @Test
     public void coupon_PostMapping_BadRequest_Validation() throws Exception {
         //given
-        RegisterReqDTO registerReqDTO = new RegisterReqDTO();
-        registerReqDTO.setPhoneNumber("");
-        registerReqDTO.setPrivateYn(false);
+        CouponIssueDto couponIssueDto = new CouponIssueDto();
+        couponIssueDto.setPhoneNumber("");
+        couponIssueDto.setPrivateYn(false);
 
 
-        given(this.eventServiceImpl.registerCoupon(any(RegisterReqDTO.class))).willThrow(new PreBookingException(ServiceError.VALIDATION_CHECK_ERROR));
+        given(this.eventServiceImpl.registerCoupon(any(CouponIssueDto.class))).willThrow(new PreBookingException(ServiceError.VALIDATION_CHECK_ERROR));
 
 
         //when //then
         mockMvc.perform(post("/api/events")
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(objectMapper.writeValueAsString(registerReqDTO)))
+                .content(objectMapper.writeValueAsString(couponIssueDto)))
                 .andDo(print())
                 .andExpect(status().isNotAcceptable())
                 .andExpect(jsonPath("resultCode").value("4002"))
@@ -149,17 +149,17 @@ public class EventControllerTest {
     @Test
     public void coupon_PostMapping_BadRequest_WrongNumber_Validation() throws Exception {
         //given
-        RegisterReqDTO registerReqDTO = new RegisterReqDTO();
-        registerReqDTO.setPhoneNumber("0101111111");
-        registerReqDTO.setPrivateYn(true);
-        given(this.eventServiceImpl.registerCoupon(any(RegisterReqDTO.class))).willThrow(new PreBookingException(ServiceError.WRONG_PHONE_NUMBER));
+        CouponIssueDto couponIssueDto = new CouponIssueDto();
+        couponIssueDto.setPhoneNumber("0101111111");
+        couponIssueDto.setPrivateYn(true);
+        given(this.eventServiceImpl.registerCoupon(any(CouponIssueDto.class))).willThrow(new PreBookingException(ServiceError.WRONG_PHONE_NUMBER));
 
 
         //when //then
         mockMvc.perform(post("/api/events")
                 .accept(MediaType.APPLICATION_JSON_UTF8_VALUE)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(objectMapper.writeValueAsString(registerReqDTO)))
+                .content(objectMapper.writeValueAsString(couponIssueDto)))
                 .andDo(print())
                 .andExpect(status().isLengthRequired())
                 .andExpect(jsonPath("resultCode").value("4003"))

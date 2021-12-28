@@ -10,5 +10,4 @@ public class ExceptionHandler {
     public ResponseEntity<?> PreBookingExceptionHandler(PreBookingException e){
         return new ResponseEntity(e.getServiceError().getResultError(), e.getServiceError().getHttpStatus());
     }
-
 }

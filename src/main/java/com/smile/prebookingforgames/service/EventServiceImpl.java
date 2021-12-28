@@ -1,7 +1,7 @@
 package com.smile.prebookingforgames.service;
 
 import com.smile.prebookingforgames.dto.CouponListDTO;
-import com.smile.prebookingforgames.dto.RegisterReqDTO;
+import com.smile.prebookingforgames.dto.CouponIssueDto;
 import com.smile.prebookingforgames.error.ServiceError;
 import com.smile.prebookingforgames.exception.PreBookingException;
 import com.smile.prebookingforgames.model.Coupon;
@@ -25,7 +25,7 @@ public class EventServiceImpl implements EventService{
     private MakeCoupon makeCoupon;
 
     @Override
-    public Map<String,String> registerCoupon(RegisterReqDTO registerDTO)  {
+    public Map<String,String> registerCoupon(CouponIssueDto registerDTO)  {
       try {
           makeCoupon.phoneNumberDuplicateCheck(registerDTO.getPhoneNumber());
           String found = makeCoupon.digit12Number();
