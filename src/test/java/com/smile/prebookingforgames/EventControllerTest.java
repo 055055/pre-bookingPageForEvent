@@ -181,7 +181,7 @@ public class EventControllerTest {
                 .build();
 
         list.add(couponIssuedListDTO);
-        given(this.eventServiceImpl.findAllCoupon()).willReturn(list);
+        given(this.eventServiceImpl.getAllCoupons()).willReturn(list);
 
         //when //then
         mockMvc.perform(get("/api/events/coupon-list/all")

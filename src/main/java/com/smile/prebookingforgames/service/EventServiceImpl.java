@@ -2,16 +2,14 @@ package com.smile.prebookingforgames.service;
 
 import com.smile.prebookingforgames.dto.CouponIssueDto;
 import com.smile.prebookingforgames.dto.CouponIssuedListDto;
-import com.smile.prebookingforgames.entity.CouponEntity;
 import com.smile.prebookingforgames.model.AlphabetAndNumericCoupon;
-import com.smile.prebookingforgames.model.Coupon;
 import com.smile.prebookingforgames.repository.CouponRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -22,27 +20,30 @@ public class EventServiceImpl implements EventService {
     @Override
     public CouponIssueDto issueCoupon(CouponIssueDto.Request registerDTO) {
 
-        Coupon coupon = new AlphabetAndNumericCoupon(couponRepository);
-        CouponEntity issue = coupon.issue(registerDTO);
-        return CouponIssueDto.Response.builder().couponNumber(issue.getCouponNumber()).build();
+        return CouponIssueDto.Response
+                .builder()
+                .couponNumber(
+                        new AlphabetAndNumericCoupon(couponRepository)
+                                .issue(registerDTO)
+                                .getCouponNumber()
+                        )
+                .build();
     }
 
     @Override
-    public List<CouponIssuedListDto> findAllCoupon() {
-        List<CouponIssuedListDto> result = new ArrayList<>();
-        Coupon coupon = new AlphabetAndNumericCoupon(couponRepository);
+    public List<CouponIssuedListDto> getAllCoupons() {
 
-        for (CouponEntity couponEntity : coupon.findAll()) {
-            result.add(
-                    CouponIssuedListDto.builder()
-                            .couponSeq(couponEntity.getCouponSeq())
-                            .couponNumber(couponEntity.getCouponNumber())
-                            .phoneNumber(couponEntity.getPhoneNumber())
-                            .privateYn(couponEntity.isPrivateYn())
-                            .regDate(couponEntity.getRegDate())
-                            .build()
-            );
-        }
-        return result;
+        return new AlphabetAndNumericCoupon(couponRepository)
+                .findAll()
+                .stream()
+                .map(coupon ->
+                        CouponIssuedListDto.builder()
+                                .couponSeq(coupon.getSeq())
+                                .couponNumber(coupon.getCouponNumber())
+                                .phoneNumber(coupon.getPhoneNumber())
+                                .privateYn(coupon.isPrivateYn())
+                                .regDate(coupon.getRegDate())
+                                .build()
+                ).collect(Collectors.toList());
     }
 }

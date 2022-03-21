@@ -28,7 +28,7 @@ public class EventController {
     }
 
     @GetMapping(value = "/coupon-list/all")
-    public Map<String, List<CouponIssuedListDto>> findAllCoupon() throws IllegalAccessException {
-        return Collections.singletonMap("data", eventService.findAllCoupon());
+    public Map<String, List<CouponIssuedListDto>> getAllCoupons() {
+        return Collections.singletonMap("data", eventService.getAllCoupons());
     }
 }

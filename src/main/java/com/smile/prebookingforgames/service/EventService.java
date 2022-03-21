@@ -8,5 +8,5 @@ import java.util.List;
 public interface EventService {
     CouponIssueDto issueCoupon(CouponIssueDto.Request registerDTO);
 
-    List<CouponIssuedListDto> findAllCoupon();
+    List<CouponIssuedListDto> getAllCoupons();
 }

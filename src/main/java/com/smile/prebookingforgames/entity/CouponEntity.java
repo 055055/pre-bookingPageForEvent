@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class CouponEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long couponSeq;
+    private Long seq;
     private String phoneNumber;
     private boolean privateYn;
     private String couponNumber;
